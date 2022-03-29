@@ -1,0 +1,19 @@
+@import '@/style/base.scss';
+
+.card {
+	& .title {
+		opacity: 0;
+		visibility: hidden;
+		position: absolute;
+		top: calc(100% - 5rem);
+		transition: all 0.3s ease;
+		text-align: center;
+	}
+	:hover {
+		& .title {
+			top: 0;
+			opacity: 1;
+			visibility: visible;
+		}
+	}
+}
