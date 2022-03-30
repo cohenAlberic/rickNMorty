@@ -63,18 +63,24 @@ export const store = createStore<State>({
       context.commit("update", { ...apiResults, url });
     },
     async goTo(context, data) {
-      let url = "";
-      if (data.page) {
-        const newUrl = new URL(context.state.url);
-        newUrl.searchParams.set("page", data.page);
-        url = newUrl.toString();
-      }
+      try {
+        let url = "";
+        if (data.page) {
+          const newUrl = new URL(context.state.url);
+          newUrl.searchParams.set("page", data.page);
+          url = newUrl.toString();
+        }
 
-      const apiResults: {
-        info: { next: string; prev: string; pages: number; count: number };
-        results: Character[];
-      } = await (await fetch(url)).json();
-      context.commit("update", { ...apiResults, url });
+        const apiResults: {
+          info: { next: string; prev: string; pages: number; count: number };
+          results: Character[];
+        } = await (await fetch(url)).json();
+        console.info(apiResults);
+        context.commit("update", { ...apiResults, url });
+      } catch (e) {
+        console.info("error");
+        console.error(e);
+      }
     },
     async getCharacterById(context, data) {
       const url = `https://rickandmortyapi.com/api/character/${data.id}`;

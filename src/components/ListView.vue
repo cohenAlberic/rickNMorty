@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { key } from "../types/Store";
@@ -15,14 +15,20 @@ import {
 const route = useRoute();
 const store = useStore(key);
 
-const current = ref(parseInt(route.query.page as string));
+const current = ref(0);
 
-watch(route, async () => {
-  isLoading.value = true;
-  current.value = parseInt(route.query.page as string);
-  await store.dispatch({ type: "goTo", page: route.query.page });
-  isLoading.value = false;
-});
+watch(
+  () => route.query,
+  () => {
+    if (route.query.page) {
+      isLoading.value = true;
+      current.value = parseInt(route.query.page as string);
+      store
+        .dispatch({ type: "goTo", page: current.value })
+        .then(() => (isLoading.value = false));
+    }
+  }
+);
 
 const query = ref("");
 const dead = ref(true);
@@ -45,9 +51,10 @@ const pageHandler = (page: number) => {
 
 onMounted(async () => {
   await store.dispatch({ type: "goTo", page: route.query.page ?? 1 });
-
+  current.value = parseInt((route.query.page as string) ?? 1);
   isLoading.value = false;
 });
+//onBeforeUnmount(() => unwatch());
 </script>
 <template>
   <div v-if="isLoading" class="row flex-center">
