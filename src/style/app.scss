@@ -6,6 +6,7 @@
 	padding: 2rem;
 	width: 100%;
 	font-weight: normal;
+	max-height: 100vh;
 }
 
 header {
@@ -61,12 +62,6 @@ nav a:first-of-type {
 		display: flex;
 		place-items: center;
 	}
-
-	// #app {
-	// 	display: grid;
-	// 	grid-template-columns: 1fr 1fr;
-	// 	padding: 0 2rem;
-	// }
 
 	header {
 		display: flex;

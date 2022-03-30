@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { key } from "../types/Store";
 import CharacterCard from "./CharacterCard.vue";
@@ -12,19 +12,23 @@ import {
   laAngleDoubleRightSolid,
 } from "@quasar/extras/line-awesome";
 
-const router = useRouter();
 const route = useRoute();
 const store = useStore(key);
 
-const current = ref(1);
+const current = ref(parseInt(route.query.page as string));
 
-watch(route, () => (current.value = parseInt(route.query.page as string)));
+watch(route, async () => {
+  isLoading.value = true;
+  current.value = parseInt(route.query.page as string);
+  await store.dispatch({ type: "goTo", page: route.query.page });
+  isLoading.value = false;
+});
 
 const query = ref("");
 const dead = ref(true);
 const alive = ref(true);
 const unknown = ref(true);
-
+const isLoading = ref(true);
 const searchHandler = () => {
   store.dispatch({
     type: "search",
@@ -35,19 +39,21 @@ const searchHandler = () => {
   });
 };
 
-const clickHandler = (id: number) => {
-  router.push({ name: "details", params: { id } });
+const pageHandler = (page: number) => {
+  return { name: "characters", query: { page } };
 };
 
-const pageHandler = (page: number) => {
-  return { path: "/characters", query: { page } };
-};
+onMounted(async () => {
+  await store.dispatch({ type: "goTo", page: route.query.page ?? 1 });
+
+  isLoading.value = false;
+});
 </script>
 <template>
-  <div class="col items-center">
-    <div class="row justify-center logo">
-      <img src="@/assets/logo.png" alt="logo" />
-    </div>
+  <div v-if="isLoading" class="row flex-center">
+    <q-spinner color="secondary" size="5em" />
+  </div>
+  <div v-else class="col items-center">
     <div class="row q-gutter-md searchbar justify-center">
       <div class="col-6">
         <div class="row items-center justify-evenly">
@@ -58,19 +64,19 @@ const pageHandler = (page: number) => {
               label-color="secondary"
               outlined
               v-model="query"
-              label="Nom"
+              label="Name"
               class="searchInput"
             />
           </div>
           <div class="col-2">
             <div class="row">
-              <q-checkbox v-model="alive" label="Vivant" color="secondary" />
+              <q-checkbox v-model="alive" label="Alive" color="secondary" />
             </div>
             <div class="row">
-              <q-checkbox v-model="dead" label="Mort" color="secondary" />
+              <q-checkbox v-model="dead" label="Dead" color="secondary" />
             </div>
             <div class="row">
-              <q-checkbox v-model="unknown" label="Inconnu" color="secondary" />
+              <q-checkbox v-model="unknown" label="Unknown" color="secondary" />
             </div>
           </div>
           <div class="col-2 items-center justify-center">
@@ -91,7 +97,9 @@ const pageHandler = (page: number) => {
         v-for="item in store.state.list"
         v-bind:key="item.id"
       >
-        <CharacterCard :char="item" v-on:click="() => clickHandler(item.id)" />
+        <router-link :to="{ name: 'details', params: { id: item.id } }">
+          <CharacterCard :char="item" />
+        </router-link>
       </div>
     </div>
     <div class="row flex-center">
