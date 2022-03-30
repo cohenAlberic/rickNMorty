@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { key } from "../types/Store";
 import CharacterCard from "./CharacterCard.vue";
+import {
+  laAngleLeftSolid,
+  laAngleRightSolid,
+  laSearchengin,
+  laAngleDoubleLeftSolid,
+  laAngleDoubleRightSolid,
+} from "@quasar/extras/line-awesome";
+
 const router = useRouter();
 const route = useRoute();
 const store = useStore(key);
-const current = ref(
-  route.query.page ? parseInt(route.query.page.toString()) : 1
-);
-//current.value = route.query.page ? parseInt(route.query.page.toString()) : 1;
+
+const current = ref(1);
+
+watch(route, () => (current.value = parseInt(route.query.page as string)));
+
 const query = ref("");
 const dead = ref(true);
 const alive = ref(true);
@@ -68,7 +77,7 @@ const pageHandler = (page: number) => {
             <q-btn
               round
               color="secondary"
-              icon="fa-brands fa-searchengin"
+              :icon="laSearchengin"
               v-on:click="searchHandler"
               class="button"
             />
@@ -93,9 +102,13 @@ const pageHandler = (page: number) => {
         boundary-numbers
         color="secondary"
         direction-links
-        icon-next="fa-solid fa-angles-right"
-        icon-prev="fa-solid fa-angles-left"
+        boundary-links
+        :icon-next="laAngleRightSolid"
+        :icon-prev="laAngleLeftSolid"
+        :icon-first="laAngleDoubleLeftSolid"
+        :icon-last="laAngleDoubleRightSolid"
         :to-fn="pageHandler"
+        push
       />
     </div>
   </div>

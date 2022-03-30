@@ -5,10 +5,10 @@ const prop = defineProps<{ char: Character }>();
 </script>
 
 <template>
-  <q-card class="card" :flat="false">
+  <q-card :class="`card ${prop.char.status.toLowerCase()}`" bordered>
     <q-img :src="prop.char.image">
       <div class="absolute-bottom title">
-        <p class="absolute-center text-subtitle2 text-center">
+        <p class="absolute-center text-h6 text-center">
           {{ prop.char.name }}
         </p>
       </div>

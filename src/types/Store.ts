@@ -30,7 +30,10 @@ export const store = createStore<State>({
 			state.nextPage = data.info.next;
 			state.pages = data.info.pages;
 			state.count = data.info.count;
-			state.url = data.url;
+
+			if (data.url) {
+				state.url = data.url;
+			}
 		},
 		updateUrl(state, data) {
 			state.url = data.url;
@@ -38,7 +41,6 @@ export const store = createStore<State>({
 	},
 	actions: {
 		async init(context) {
-			console.info('init');
 			const apiResults: {
 				info: { next: string; prev: string; pages: number; count: number };
 				results: Character[];

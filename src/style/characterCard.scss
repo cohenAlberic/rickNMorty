@@ -1,6 +1,17 @@
 @import '@/style/base.scss';
 
 .card {
+	&.alive {
+		border: solid 2px green;
+	}
+
+	&.dead {
+		border: solid 2px red;
+	}
+
+	&.unknown {
+		border: solid 2px grey;
+	}
 	& .title {
 		opacity: 0;
 		visibility: hidden;
@@ -10,6 +21,7 @@
 		text-align: center;
 	}
 	:hover {
+		cursor: pointer;
 		& .title {
 			top: 0;
 			opacity: 1;
