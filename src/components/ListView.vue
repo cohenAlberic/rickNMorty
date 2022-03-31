@@ -54,7 +54,6 @@ onMounted(async () => {
   current.value = parseInt((route.query.page as string) ?? 1);
   isLoading.value = false;
 });
-//onBeforeUnmount(() => unwatch());
 </script>
 <template>
   <div v-if="isLoading" class="row flex-center">
@@ -109,7 +108,7 @@ onMounted(async () => {
         </router-link>
       </div>
     </div>
-    <div class="row flex-center">
+    <div class="row flex-center q-mt-md q-mb-md">
       <q-pagination
         :model-value="current"
         :max="store.state.pages"
